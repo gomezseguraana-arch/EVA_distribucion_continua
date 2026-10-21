@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b5862">
+<title>Distribución Gamma · EVA en una página</title>
+<style>
+:root{
+  --ink:#183037; --muted:#61757a; --paper:#fffdf8; --bg:#f1eee6;
+  --teal:#0b5862; --teal2:#14808a; --aqua:#dff3ef;
+  --orange:#e97836; --amber:#f2b94b; --cream:#fff4d8;
+  --line:#d9dfda; --white:#fff; --green:#14755c; --red:#b6423d;
+  --shadow:0 14px 38px rgba(31,55,57,.10);
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#eeece3 0,#f7f5ef 45%,#ebe7dc 100%);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.48}
+a{color:inherit} button,input{font:inherit}
+.wrap{max-width:1180px;margin:auto;padding:0 22px 46px}
+.top{position:sticky;top:0;z-index:20;background:rgba(247,245,239,.91);backdrop-filter:blur(14px);border-bottom:1px solid rgba(24,48,55,.09)}
+.topin{max-width:1180px;margin:auto;padding:10px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;gap:10px;align-items:center;font-weight:900;color:var(--teal);text-decoration:none;white-space:nowrap}.brand i{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--teal);color:white;font:700 22px Georgia,serif}
+.nav{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.nav a{text-decoration:none;font-size:.79rem;font-weight:750;padding:7px 9px;border-radius:8px;color:#496067}.nav a:hover{background:#e5eee9;color:var(--teal)}
+.hero{margin:24px 0 16px;display:grid;grid-template-columns:1.25fr .75fr;overflow:hidden;border-radius:26px;background:var(--teal);box-shadow:var(--shadow);color:white;min-height:330px}
+.heroText{padding:40px 42px;position:relative;z-index:2}.eyebrow{font-size:.74rem;text-transform:uppercase;letter-spacing:.16em;font-weight:850;color:#a9ddd7}.hero h1{font-size:clamp(2.7rem,5.6vw,5.2rem);line-height:.96;letter-spacing:-.06em;margin:10px 0 15px}.hero p{max-width:670px;color:#d9eeee;font-size:1.03rem;margin:0}.idea{margin-top:22px;display:flex;gap:11px;align-items:center;width:max-content;max-width:100%;padding:10px 13px;border:1px solid #ffffff33;background:#ffffff13;border-radius:12px;font-size:.87rem}.idea b{color:#fff5cb}
+.heroArt{position:relative;min-height:280px;background:linear-gradient(145deg,#116a72,#0b4e58);overflow:hidden}.heroArt:before,.heroArt:after{content:"";position:absolute;border-radius:50%;background:#ffffff12}.heroArt:before{width:260px;height:260px;right:-55px;top:-40px}.heroArt:after{width:160px;height:160px;left:22px;bottom:-60px}.heroArt svg{position:absolute;width:94%;height:94%;left:2%;bottom:0}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:0 0 30px}.qcard{background:var(--paper);padding:16px 17px;border:1px solid #dcded7;border-radius:15px;box-shadow:0 5px 17px rgba(35,55,52,.06)}.qcard small{font-size:.68rem;text-transform:uppercase;letter-spacing:.11em;color:var(--teal2);font-weight:850}.qcard strong{display:block;margin:5px 0 2px;font-size:1rem}.qcard span{font-size:.79rem;color:var(--muted)}
+.section{margin:32px 0}.head{display:flex;gap:15px;align-items:end;justify-content:space-between;margin-bottom:13px}.head .kicker{font-size:.7rem;text-transform:uppercase;letter-spacing:.13em;color:var(--orange);font-weight:900}.head h2{margin:3px 0 0;font-size:clamp(1.6rem,3vw,2.25rem);letter-spacing:-.04em;line-height:1.08}.head p{max-width:520px;margin:0;color:var(--muted);font-size:.87rem;text-align:right}
+.panel{background:var(--paper);border:1px solid #dadfd9;border-radius:20px;box-shadow:var(--shadow)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.concept{padding:23px}.concept h3{margin:0 0 8px;font-size:1.05rem;color:var(--teal)}.concept p{margin:0;color:#53696e;font-size:.9rem}.check{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px}.check li{display:flex;gap:9px;align-items:flex-start;font-size:.88rem}.check li:before{content:"✓";flex:0 0 22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--aqua);color:var(--green);font-weight:900}
+.params{padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.param{border-radius:15px;padding:18px;background:#f6f2e8;border:1px solid #e7e0d0}.param b{font:700 1.7rem Georgia,serif;color:var(--orange)}.param strong{display:block;margin:5px 0}.param p{font-size:.84rem;color:var(--muted);margin:0}
+.formGrid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.formulas{padding:22px}.formulaRow{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;padding:13px 0;border-bottom:1px dashed #d9ded8}.formulaRow:last-child{border:0}.flabel{font-size:.77rem;font-weight:850;color:var(--teal);text-transform:uppercase;letter-spacing:.06em}.math{font:600 1.18rem "Cambria Math",Cambria,Georgia,serif;color:#263e42;overflow-wrap:anywhere}.explain{font-size:.79rem;color:var(--muted);margin-top:4px}.warning{margin-top:13px;background:var(--cream);border:1px solid #efdca6;padding:12px 14px;border-radius:12px;font-size:.84rem;color:#675428}.warning b{color:#8a5c12}
+.metrics{padding:22px;background:linear-gradient(150deg,#0b5862,#0e6871);color:white}.metrics h3{margin:0 0 15px}.metric{padding:13px 0;border-bottom:1px solid #ffffff22}.metric:last-child{border:0}.metric small{display:block;color:#acdcd7;font-size:.73rem}.metric strong{display:block;font:650 1.35rem "Cambria Math",Cambria,Georgia,serif;margin-top:3px}.metric span{font-size:.77rem;color:#d6ece8}
+.lab{display:grid;grid-template-columns:260px 1fr;gap:16px;padding:20px}.controls h3{margin:0 0 12px}.slider{margin:14px 0}.sline{display:flex;justify-content:space-between;font-size:.83rem;font-weight:800}.sline output{background:#e6f2ef;color:var(--teal);padding:2px 9px;border-radius:8px}.slider input{width:100%;accent-color:var(--orange)}.labstats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:17px}.labstat{text-align:center;border-radius:10px;background:#f2eee3;padding:9px 5px}.labstat small{display:block;color:#738083;font-size:.68rem}.labstat b{font-size:.98rem;color:var(--teal)}
+.chart{min-width:0;border:1px solid #e4e3dc;background:white;border-radius:15px;padding:12px}.chart canvas{width:100%;height:270px;display:block}.chartnote{text-align:center;color:var(--muted);font-size:.76rem;margin-top:4px}
+.case{overflow:hidden;display:grid;grid-template-columns:.9fr 1.1fr}.caseVisual{min-height:365px;background:linear-gradient(180deg,#0a3946,#102d3e 72%,#1d4650);position:relative;overflow:hidden;color:white;padding:24px}.stars{position:absolute;inset:0;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:37px 41px;opacity:.38}.meteor{position:absolute;width:145px;height:2px;background:linear-gradient(90deg,transparent,#ffc763,#fff);transform:rotate(-29deg);box-shadow:0 0 9px #ffd980;right:45px;top:92px}.meteor:after{content:"";position:absolute;right:0;top:-3px;width:8px;height:8px;border-radius:50%;background:#fff6c8}.caseVisual .label{position:relative;z-index:2;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:850;color:#90d5d1}.caseVisual h3{position:relative;z-index:2;font-size:2rem;line-height:1.02;max-width:300px;margin:12px 0}.caseVisual p{position:relative;z-index:2;font-size:.88rem;color:#d3e6e7;max-width:340px}.rate{position:absolute;z-index:2;left:24px;bottom:22px;background:#ffffff13;border:1px solid #ffffff2e;padding:10px 13px;border-radius:11px}.rate b{display:block;font-size:1.28rem;color:#ffd273}.rate span{font-size:.75rem;color:#d4e7e8}
+.caseBody{padding:25px}.caseBody h3{margin:0 0 8px;color:var(--teal)}.caseBody>p{margin:0 0 16px;color:var(--muted);font-size:.89rem}.steps{display:grid;gap:9px}.step{display:grid;grid-template-columns:31px 1fr;gap:10px;align-items:start}.num{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;background:#fce7d9;color:#b24d1d;font-weight:900}.step b{font-size:.89rem}.step div div{font-size:.82rem;color:var(--muted);margin-top:2px}.result{margin-top:15px;border-radius:13px;padding:15px;background:var(--aqua);border:1px solid #bfdfd8}.result strong{display:block;color:var(--green);font-size:1.2rem}.result span{font-size:.83rem;color:#486d67}
+.exerciseGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.exercise{padding:17px;position:relative}.exercise .n{font-size:.67rem;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);font-weight:900}.exercise h3{font-size:.95rem;line-height:1.35;margin:8px 0}.exercise p{font-size:.82rem;color:var(--muted);margin:0 0 12px}.reveal{border:0;background:var(--teal);color:white;border-radius:9px;padding:8px 10px;font-size:.76rem;font-weight:800;cursor:pointer}.reveal:hover{background:#0e6b74}.answer{display:none;margin-top:10px;padding:10px;border-radius:9px;background:#edf6f3;color:#306158;font-size:.8rem}.answer.show{display:block}.answer b{color:var(--green)}
+.resources{padding:19px}.resrow{display:flex;gap:9px;flex-wrap:wrap}.res{display:inline-flex;align-items:center;gap:7px;text-decoration:none;padding:9px 12px;border-radius:10px;border:1px solid #d9ddd7;background:white;font-size:.79rem;font-weight:800;color:#385158}.res:hover{border-color:#87aaa6;background:#eef7f4}.res.video:before{content:"▶";color:#cf503c}.res.link:before{content:"↗";color:var(--teal2)}.res.file:before{content:"▤";color:var(--orange)}
+.phaseMedia{margin-top:14px;padding:15px 17px;border:1px solid #e3d8bd;background:linear-gradient(135deg,#fff9e9,#fffdf7);border-radius:15px;display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 5px 16px rgba(62,67,54,.05)}.phaseMediaInfo{min-width:0}.phaseBadge{display:inline-block;padding:4px 8px;border-radius:999px;background:#f6e7bb;color:#7c5b16;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;font-weight:900}.phaseMediaInfo strong{display:block;margin-top:7px;color:#334b50;font-size:.88rem}.phaseMediaInfo small{display:block;color:var(--muted);font-size:.75rem;margin-top:2px}.videoBtn{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;text-decoration:none;padding:10px 13px;border-radius:10px;background:var(--teal);color:white;font-size:.79rem;font-weight:850}.videoBtn:before{content:"▶";color:#ffd37a}.videoBtn:hover{background:#0d6b74}
+.phaseStack{display:grid;gap:13px}.phaseBlock{padding:17px;border-radius:15px;border:1px solid #dedfd8;background:#fff}.phaseBlockHead{display:flex;align-items:center;gap:12px;margin-bottom:12px}.phaseBlockHead>span{flex:0 0 auto;padding:6px 9px;border-radius:9px;background:var(--aqua);color:var(--teal);font-weight:900;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em}.phaseBlockHead strong{display:block;color:#2d4b50;font-size:.9rem}.phaseBlockHead small{display:block;color:var(--muted);font-size:.75rem;margin-top:2px}
+.footer{margin-top:32px;padding:18px 2px;color:#66797b;font-size:.76rem;display:flex;justify-content:space-between;gap:18px;border-top:1px solid #d9ddd7}.footer b{color:var(--teal)}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.heroArt{min-height:210px}.quick{grid-template-columns:repeat(2,1fr)}.formGrid,.case{grid-template-columns:1fr}.lab{grid-template-columns:1fr}.exerciseGrid{grid-template-columns:repeat(2,1fr)}.head{align-items:start;flex-direction:column}.head p{text-align:left}.nav{display:none}}
+@media(max-width:560px){.wrap{padding:0 14px 35px}.topin{padding:9px 14px}.heroText{padding:29px 23px}.hero h1{font-size:3rem}.quick,.two,.three,.exerciseGrid{grid-template-columns:1fr}.params{grid-template-columns:1fr}.formulaRow{grid-template-columns:1fr;gap:4px}.lab{padding:14px}.chart canvas{height:225px}.caseVisual{min-height:300px}.phaseMedia{align-items:flex-start;flex-direction:column}.videoBtn{width:100%;justify-content:center}.footer{display:block}.footer div+div{margin-top:8px}.labstats{grid-template-columns:1fr 1fr 1fr}.heroArt{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ===== Navegación lateral por módulos ===== */
+body{padding-left:286px}
+.sidebar{position:fixed;inset:0 auto 0 0;width:286px;background:#fffdfa;border-right:1px solid #dfe4df;z-index:40;padding:26px 18px 22px;overflow-y:auto;box-shadow:8px 0 24px rgba(34,54,52,.04)}
+.sideBrand{display:flex;align-items:center;gap:12px;padding:0 8px 22px;text-decoration:none}.sideBrandIcon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,var(--teal2),var(--teal));color:#fff;font:700 28px Georgia,serif;box-shadow:0 8px 18px rgba(11,88,98,.18)}.sideBrandText strong{display:block;font-size:1.52rem;line-height:1;color:#17363c;letter-spacing:-.04em}.sideBrandText strong em{font-style:normal;color:var(--orange)}.sideBrandText small{display:block;margin-top:6px;color:#87979a;font-size:.76rem}
+.sideSectionTitle{padding:6px 13px 8px;font-size:.67rem;letter-spacing:.14em;text-transform:uppercase;color:#94a1a3;font-weight:900}.sideNav{display:grid;gap:3px}.sideNav a{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:7px;text-decoration:none;padding:10px 12px;border-radius:12px;color:#63777b;font-size:.86rem;font-weight:650;transition:.16s}.sideNav a .idx{font-variant-numeric:tabular-nums;color:#b1a17c;font-size:.75rem;font-weight:900}.sideNav a.home{grid-template-columns:34px 1fr;background:#eef6f3;color:var(--teal);margin-bottom:8px}.sideNav a.home .idx{color:var(--teal2)}.sideNav a:hover{background:#f4f4ef;color:var(--teal)}.sideNav a.active{background:#e1f2ee;color:var(--teal);font-weight:850}.sideNav a.active .idx{color:var(--orange)}
+.sideDivider{height:1px;background:#e3e6e1;margin:14px 7px 16px}.sideMaterial{display:grid;gap:4px}.sideMaterial a{display:flex;align-items:center;gap:8px;text-decoration:none;padding:7px 13px;color:#728387;font-size:.79rem}.sideMaterial a:before{content:'↗';color:var(--orange);font-weight:900}.sideMaterial a:hover{color:var(--teal)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 46px}
+.groupIntro{margin-top:18px;padding:12px 14px;border:1px solid #ffffff2d;background:#ffffff12;border-radius:13px;max-width:720px}.groupIntro b{display:block;color:#ffe0a0;font-size:.73rem;text-transform:uppercase;letter-spacing:.11em;margin-bottom:4px}.groupIntro span{font-size:.84rem;color:#e8f4f2}
+.moduleAnchor{scroll-margin-top:20px}.soloPanel{padding:23px}.soloPanel h3{margin:0 0 8px;color:var(--teal);font-size:1.08rem}.soloPanel p{margin:0;color:#53696e;font-size:.9rem}.contextStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px}.contextMini{padding:13px 14px;border-radius:12px;background:#f7f3e8;border:1px solid #e6dfd0}.contextMini b{display:block;color:var(--teal);font-size:.84rem;margin-bottom:3px}.contextMini span{font-size:.78rem;color:var(--muted)}
+#medidas .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:linear-gradient(145deg,#0b5862,#0f7079);padding:0;overflow:hidden}#medidas .metric{padding:22px;border-bottom:0;border-right:1px solid #ffffff20}#medidas .metric:last-child{border-right:0}
+@media(max-width:980px){body{padding-left:0}.sidebar{position:sticky;top:0;width:100%;height:auto;padding:8px 12px;border-right:0;border-bottom:1px solid #dfe4df;display:flex;align-items:center;gap:8px;overflow:visible}.sideBrand{padding:0;flex:0 0 auto}.sideBrandIcon{width:38px;height:38px;border-radius:10px;font-size:22px}.sideBrandText strong{font-size:1rem}.sideBrandText small,.sideSectionTitle,.sideDivider,.sideMaterial{display:none}.sideNav{display:flex;gap:4px;overflow-x:auto;white-space:nowrap;padding-bottom:2px}.sideNav a{display:flex;grid-template-columns:none;padding:8px 9px;font-size:.75rem}.sideNav a .idx{font-size:.7rem}.sideNav a.home{margin-bottom:0}.wrap{padding:0 18px 40px}.moduleAnchor{scroll-margin-top:72px}}
+@media(max-width:680px){.sideBrandText{display:none}.sideNav a{font-size:0}.sideNav a .idx{font-size:.72rem}.sideNav a.home{font-size:.75rem}.sideNav a.home .idx{display:none}.contextStrip,#medidas .metrics{grid-template-columns:1fr}#medidas .metric{border-right:0;border-bottom:1px solid #ffffff20}.hero{margin-top:16px}}
+</style>
+</head>
+<body>
+<aside class="sidebar" aria-label="Recorrido por módulos">
+ <a class="sideBrand" href="#inicio"><span class="sideBrandIcon">Γ</span><span class="sideBrandText"><strong>Gamma<em>.</em></strong><small>Probabilidad</small></span></a>
+ <div>
+  <div class="sideSectionTitle">Tu recorrido</div>
+  <nav class="sideNav">
+   <a class="home active" href="#inicio"><span class="idx">⌂</span><span>Bienvenida</span></a>
+   <a href="#que-es-gamma"><span class="idx">01</span><span>¿Qué es Gamma?</span></a>
+   <a href="#caracteristicas"><span class="idx">02</span><span>Características</span></a>
+   <a href="#aplicaciones"><span class="idx">03</span><span>Aplicaciones</span></a>
+   <a href="#condiciones"><span class="idx">04</span><span>Condiciones</span></a>
+   <a href="#parametros"><span class="idx">05</span><span>Parámetros α y β</span></a>
+   <a href="#formulas"><span class="idx">06</span><span>Probabilidades</span></a>
+   <a href="#medidas"><span class="idx">07</span><span>Media y desvío</span></a>
+   <a href="#grafico"><span class="idx">08</span><span>Gráfico interactivo</span></a>
+   <a href="#ejemplo"><span class="idx">09</span><span>Ejemplo resuelto</span></a>
+   <a href="#practica"><span class="idx">10</span><span>Autoevaluación</span></a>
+  </nav>
+  <div class="sideDivider"></div>
+  <div class="sideSectionTitle">Material del grupo</div>
+  <div class="sideMaterial">
+   <a href="#recursos">Fases anteriores</a>
+   <a target="_blank" rel="noopener" href="https://bryan-villagra.github.io/Distribuci-n_Gamma/">Mapa conceptual</a>
+   <a target="_blank" href="recursos/Ficha_Conceptual_Distribucion_Gamma.pdf">Ficha conceptual</a>
+   <a target="_blank" href="recursos/Algoritmo_Decision_Gamma.jpeg">Algoritmo de decisión</a>
+  </div>
+ </div>
+</aside>
+
+<main class="wrap" id="inicio">
+ <section class="hero moduleAnchor">
+  <div class="heroText">
+   <div class="eyebrow">PROBABILIDAD · GRUPO 5</div>
+   <h1>Distribución<br>Gamma</h1>
+   <p>Una distribución continua para estudiar cantidades positivas, especialmente tiempos de espera, duración de procesos y el tiempo necesario hasta que ocurren varios eventos.</p>
+   <div class="groupIntro"><b>Integrantes</b><span>Gómez Segura, Ana Isabel · Ríos, Luz Morena · Villagra, Brian Gustavo</span></div>
+   <div class="idea"><span>💡</span><span><b>Idea para recordar:</b> Poisson pregunta “¿cuántos ocurren?”; Gamma puede preguntar “¿cuánto esperamos hasta que ocurran varios?”.</span></div>
+  </div>
+  <div class="heroArt" aria-hidden="true">
+   <svg viewBox="0 0 420 300">
+    <line x1="45" y1="242" x2="390" y2="242" stroke="#b4ded9" stroke-width="2"/><line x1="55" y1="252" x2="55" y2="50" stroke="#b4ded9" stroke-width="2"/>
+    <path d="M57 240 C82 238 92 190 112 136 C134 76 176 66 210 101 C250 143 255 210 382 239" fill="#58c5ba33"/>
+    <path d="M57 240 C82 238 92 190 112 136 C134 76 176 66 210 101 C250 143 255 210 382 239" fill="none" stroke="#fff4cf" stroke-width="5" stroke-linecap="round"/>
+    <line x1="186" y1="89" x2="186" y2="242" stroke="#f9c35d" stroke-width="2" stroke-dasharray="7 7"/>
+    <text x="288" y="79" fill="#d9efec" font-size="18">x &gt; 0</text><text x="304" y="117" fill="#ffcf6e" font-family="Georgia" font-size="60">Γ</text>
+   </svg>
+  </div>
+ </section>
+
+ <section class="quick" aria-label="Ficha rápida">
+  <article class="qcard"><small>Tipo</small><strong>Continua</strong><span>Puede tomar infinitos valores dentro de intervalos.</span></article>
+  <article class="qcard"><small>Valores de X</small><strong>x &gt; 0</strong><span>Solo modela cantidades continuas positivas.</span></article>
+  <article class="qcard"><small>Parámetros</small><strong>α y β</strong><span>Forma y escala; ambos deben ser positivos.</span></article>
+  <article class="qcard"><small>Forma habitual</small><strong>Asimetría positiva</strong><span>Frecuentemente presenta una cola hacia la derecha.</span></article>
+ </section>
+
+ <section class="section moduleAnchor" id="que-es-gamma">
+  <div class="head"><div><div class="kicker">01 · ¿Qué es Gamma?</div><h2>Una distribución continua para valores positivos</h2></div><p>La idea central es reconocer qué tipo de variable modela y qué significa trabajar con una distribución continua.</p></div>
+  <article class="panel soloPanel"><h3>Definición</h3><p>La distribución Gamma es una distribución de probabilidad continua utilizada para modelar variables aleatorias positivas. Resulta especialmente útil en tiempos de espera, duraciones y otras cantidades continuas cuyo comportamiento puede ajustarse a este modelo.</p></article>
+  <div class="phaseMedia" aria-label="Recurso audiovisual de la Fase 1">
+   <div class="phaseMediaInfo"><span class="phaseBadge">Fase 1 · Video 1</span><strong>Teoría y Aplicaciones</strong><small>Introducción conceptual y situaciones en las que puede utilizarse la distribución Gamma.</small></div>
+   <a class="videoBtn" target="_blank" rel="noopener" href="https://youtu.be/_OegW0gisOw?si=nhvFukn1IqPIaiDk">Ver video</a>
+  </div>
+ </section>
+
+ <section class="section moduleAnchor" id="caracteristicas">
+  <div class="head"><div><div class="kicker">02 · Características</div><h2>¿Cómo se reconoce?</h2></div><p>Sus rasgos principales permiten diferenciarla de otras distribuciones.</p></div>
+  <article class="panel concept"><ul class="check" style="margin-top:0"><li>Es una distribución de probabilidad continua.</li><li>La variable solo toma valores positivos: x &gt; 0.</li><li>Generalmente presenta asimetría hacia la derecha.</li><li>Su forma depende principalmente de α y su escala de β.</li><li>La distribución Exponencial es un caso particular cuando α = 1.</li></ul></article>
+ </section>
+
+ <section class="section moduleAnchor" id="aplicaciones">
+  <div class="head"><div><div class="kicker">03 · Aplicaciones</div><h2>¿En qué situaciones puede utilizarse?</h2></div><p>Gamma aparece en contextos donde interesa modelar tiempos, duraciones o magnitudes continuas positivas.</p></div>
+  <div class="contextStrip">
+   <div class="contextMini"><b>Tiempos de espera</b><span>Tiempo hasta que ocurren varios eventos.</span></div>
+   <div class="contextMini"><b>Duración y mantenimiento</b><span>Tiempo requerido para completar procesos o reparaciones.</span></div>
+   <div class="contextMini"><b>Vida útil y fallas</b><span>Tiempo de vida o hasta la falla de determinados sistemas.</span></div>
+  </div>
+ </section>
+
+ <section class="section moduleAnchor" id="condiciones">
+  <div class="head"><div><div class="kicker">04 · Condiciones</div><h2>¿Cuándo tiene sentido aplicar Gamma?</h2></div><p>No alcanza con que los datos sean positivos: también hay que revisar el contexto y el comportamiento del fenómeno.</p></div>
+  <article class="panel concept"><ul class="check" style="margin-top:0"><li>La variable estudiada es continua.</li><li>Solo puede tomar valores positivos.</li><li>Representa un tiempo, duración, consumo u otra magnitud continua positiva.</li><li>Los datos suelen presentar asimetría hacia la derecha.</li><li>En problemas de espera, puede estar relacionada con la ocurrencia de varios eventos a lo largo del tiempo.</li></ul></article>
+ </section>
+
+ <section class="section moduleAnchor" id="parametros">
+  <div class="head"><div><div class="kicker">05 · Parámetros α y β</div><h2>Forma y escala de la distribución</h2></div><p>En esta página usamos la parametrización X ~ Γ(α, β), con β como parámetro de escala.</p></div>
+  <div class="panel params">
+   <div class="param"><b>α</b><strong>Parámetro de forma</strong><p>Cambia principalmente la forma de la curva. En problemas de espera hasta eventos, puede relacionarse con la cantidad de eventos esperados.</p></div>
+   <div class="param"><b>β</b><strong>Parámetro de escala</strong><p>Expande o comprime la distribución sobre el eje horizontal. Si se usa una tasa λ, entonces β = 1/λ.</p></div>
+  </div>
+  <div class="phaseMedia" aria-label="Recurso audiovisual de la Fase 1">
+   <div class="phaseMediaInfo"><span class="phaseBadge">Fase 1 · Video 2</span><strong>Cálculo de probabilidades · parámetros α y β</strong><small>Complemento para interpretar los parámetros y avanzar hacia el cálculo de probabilidades.</small></div>
+   <a class="videoBtn" target="_blank" rel="noopener" href="https://youtu.be/RGbwBPgVRcU?si=K0gdbgFdLFe_4fE5">Ver video</a>
+  </div>
+ </section>
+
+ <section class="section moduleAnchor" id="formulas">
+  <div class="head"><div><div class="kicker">06 · Probabilidades</div><h2>Puntual, acumulada y por intervalos</h2></div><p>En una variable continua, la probabilidad no se interpreta en un único punto sino como área sobre un intervalo.</p></div>
+  <article class="panel formulas">
+   <div class="formulaRow"><div class="flabel">Densidad</div><div><div class="math">f(x) = x<sup>α−1</sup> e<sup>−x/β</sup> / [Γ(α) β<sup>α</sup>], &nbsp; x &gt; 0</div><div class="explain">Describe cómo se distribuye la densidad de probabilidad.</div></div></div>
+   <div class="formulaRow"><div class="flabel">Probabilidad puntual</div><div><div class="math">P(X = x₀) = 0</div><div class="explain">Como X es continua, un único punto no tiene área.</div></div></div>
+   <div class="formulaRow"><div class="flabel">Acumulada</div><div><div class="math">F(x) = P(X ≤ x) = ∫<sub>0</sub><sup>x</sup> f(t) dt</div><div class="explain">Es el área bajo la curva desde 0 hasta x.</div></div></div>
+   <div class="formulaRow"><div class="flabel">Intervalo</div><div><div class="math">P(a ≤ X ≤ b) = F(b) − F(a)</div><div class="explain">Resta dos probabilidades acumuladas.</div></div></div>
+   <div class="warning"><b>Error frecuente:</b> f(x₀) no es P(X=x₀). En una distribución continua, la probabilidad puntual es siempre 0.</div>
+  </article>
+ </section>
+
+ <section class="section moduleAnchor" id="medidas">
+  <div class="head"><div><div class="kicker">07 · Media y desvío</div><h2>Medidas principales</h2></div><p>Estas fórmulas permiten interpretar el centro y la dispersión de una Gamma parametrizada con forma α y escala β.</p></div>
+  <aside class="panel metrics">
+   <div class="metric"><small>Esperanza / media</small><strong>E(X) = αβ</strong><span>Valor promedio esperado a largo plazo.</span></div>
+   <div class="metric"><small>Varianza</small><strong>V(X) = αβ²</strong><span>Mide la dispersión cuadrática.</span></div>
+   <div class="metric"><small>Desvío estándar</small><strong>σ = β√α</strong><span>Dispersión expresada en las mismas unidades que X.</span></div>
+  </aside>
+ </section>
+
+ <section class="section moduleAnchor" id="grafico">
+  <div class="head"><div><div class="kicker">08 · Representación gráfica</div><h2>Mové α y β y mirá qué cambia</h2></div><p>La curva no tiene una única forma. Esta mini simulación permite mostrarlo durante la exposición sin abandonar la misma página.</p></div>
+  <div class="panel lab">
+   <div class="controls">
+    <h3>Explorador Gamma</h3>
+    <div class="slider"><div class="sline"><label for="alpha">α · forma</label><output id="ao">3</output></div><input id="alpha" type="range" min="0.5" max="8" value="3" step="0.5"></div>
+    <div class="slider"><div class="sline"><label for="beta">β · escala</label><output id="bo">2</output></div><input id="beta" type="range" min="0.5" max="5" value="2" step="0.5"></div>
+    <div class="labstats"><div class="labstat"><small>Media</small><b id="mean">6,00</b></div><div class="labstat"><small>Varianza</small><b id="variance">12,00</b></div><div class="labstat"><small>Desvío</small><b id="sd">3,46</b></div></div>
+   </div>
+   <div class="chart"><canvas id="gammaChart" width="780" height="300" aria-label="Gráfico interactivo de una densidad Gamma"></canvas><div class="chartnote">Área total bajo la curva = 1 · La probabilidad se interpreta como área en intervalos.</div></div>
+  </div>
+ </section>
+
+ <section class="section moduleAnchor" id="ejemplo">
+  <div class="head"><div><div class="kicker">09 · Ejemplo resuelto</div><h2>Una lluvia de meteoros</h2></div><p>Es distinto al ejemplo de consumo de energía ya usado en las fases anteriores y conecta de forma visual la relación entre Poisson y Gamma.</p></div>
+  <div class="panel case">
+   <div class="caseVisual"><div class="stars"></div><div class="meteor"></div><div class="label">Misión del observatorio</div><h3>¿Cuánto esperamos hasta detectar 4 meteoros?</h3><p>Supongamos una tasa estable de detección y eventos independientes durante el período observado.</p><div class="rate"><b>1 meteoro / 2 min</b><span>λ = 0,5 por minuto → β = 2 minutos</span></div></div>
+   <div class="caseBody"><h3>Modelo y resolución</h3><p>Si T es el tiempo hasta detectar el cuarto meteoro, entonces usamos una Gamma con α = 4 y β = 2.</p>
+    <div class="steps">
+     <div class="step"><span class="num">1</span><div><b>Planteamos el modelo</b><div>T ~ Γ(4, 2)</div></div></div>
+     <div class="step"><span class="num">2</span><div><b>Tiempo promedio</b><div>E(T) = αβ = 4 × 2 = <strong>8 minutos</strong>.</div></div></div>
+     <div class="step"><span class="num">3</span><div><b>Desvío estándar</b><div>σ = β√α = 2√4 = <strong>4 minutos</strong>.</div></div></div>
+     <div class="step"><span class="num">4</span><div><b>Probabilidad acumulada</b><div>P(T ≤ 10) = F(10) ≈ <strong>0,735</strong>. Para el valor numérico se usa la acumulada Gamma mediante tabla o software.</div></div></div>
+    </div>
+    <div class="result"><strong>≈ 73,5 %</strong><span>de probabilidad de haber registrado el cuarto meteoro antes de completar 10 minutos de observación.</span></div>
+   </div>
+  </div>
+  <div class="phaseMedia" aria-label="Recurso audiovisual de la Fase 1">
+   <div class="phaseMediaInfo"><span class="phaseBadge">Fase 1 · Video 3</span><strong>Ejercicios resueltos</strong><small>Ejemplo complementario para observar cómo se aplica la distribución Gamma paso a paso.</small></div>
+   <a class="videoBtn" target="_blank" rel="noopener" href="https://youtu.be/kjacFXhxsU4?si=N87TTaQ3NvKcQkee">Ver video</a>
+  </div>
+ </section>
+
+ <section class="section moduleAnchor" id="practica">
+  <div class="head"><div><div class="kicker">10 · Autoevaluación</div><h2>Cuatro preguntas para comprobar lo aprendido</h2></div><p>Están pensadas para resolver oralmente durante la exposición o para repasar al finalizar el recorrido.</p></div>
+  <div class="exerciseGrid">
+   <article class="panel exercise"><div class="n">Pregunta 1 · reconocer</div><h3>Se mide el tiempo hasta que llega la tercera llamada. ¿Podría modelarse con Gamma?</h3><p>Pensá en el tipo de variable y en qué representa.</p><button class="reveal">Ver respuesta</button><div class="answer"><b>Sí, podría.</b> Es un tiempo continuo y positivo hasta varios eventos, siempre que los supuestos del proceso sean adecuados.</div></article>
+   <article class="panel exercise"><div class="n">Pregunta 2 · medidas</div><h3>Si X ~ Γ(4,2), ¿cuánto valen la media y el desvío?</h3><p>Usá E(X)=αβ y σ=β√α.</p><button class="reveal">Ver respuesta</button><div class="answer"><b>Media = 8.</b> Desvío = 2√4 = <b>4</b>.</div></article>
+   <article class="panel exercise"><div class="n">Pregunta 3 · puntual</div><h3>Si X es Gamma, ¿cuánto vale P(X = 8)?</h3><p>Recordá que la variable es continua.</p><button class="reveal">Ver respuesta</button><div class="answer"><b>0.</b> La probabilidad de un valor exacto en una variable continua es cero.</div></article>
+   <article class="panel exercise"><div class="n">Pregunta 4 · intervalo</div><h3>Si F(10)=0,735 y F(4)=0,143, ¿cuánto vale P(4 ≤ X ≤ 10)?</h3><p>Aplicá F(10) − F(4).</p><button class="reveal">Ver respuesta</button><div class="answer"><b>0,592 ≈ 59,2 %.</b> Se resta 0,735 − 0,143.</div></article>
+  </div>
+ </section>
+
+ <section class="section moduleAnchor" id="recursos">
+  <div class="head"><div><div class="kicker">Material del grupo · Recursos por fases</div><h2>Producciones construidas en las fases anteriores</h2></div><p>Los videos de la Fase 1 están ubicados junto al contenido que ayudan a explicar. Aquí quedan agrupados los demás materiales.</p></div>
+  <div class="panel resources">
+   <div class="phaseStack">
+    <div class="phaseBlock">
+     <div class="phaseBlockHead"><span>Fase 2</span><div><strong>Construcción conceptual</strong><small>Materiales para organizar y profundizar los conceptos principales de Gamma.</small></div></div>
+     <div class="resrow">
+      <a class="res link" target="_blank" rel="noopener" href="https://bryan-villagra.github.io/Distribuci-n_Gamma/">Mapa conceptual interactivo</a>
+      <a class="res file" target="_blank" href="recursos/Ficha_Conceptual_Distribucion_Gamma.pdf">Ficha conceptual</a>
+     </div>
+    </div>
+    <div class="phaseBlock">
+     <div class="phaseBlockHead"><span>Fase 3</span><div><strong>Identificación, mediación y evaluación</strong><small>Recursos interactivos para reconocer la distribución y comprobar la comprensión.</small></div></div>
+     <div class="resrow">
+      <a class="res file" target="_blank" href="recursos/Algoritmo_Decision_Gamma.jpeg">Algoritmo de decisión</a>
+      <a class="res link" target="_blank" rel="noopener" href="https://gomezseguraana-arch.github.io/eva-evaluativo_distribucion-gamma/#inicio">EVA y algoritmo de decisión</a>
+      <a class="res link" target="_blank" rel="noopener" href="https://docs.google.com/forms/d/e/1FAIpQLSeLW_35kULN8Gf3pSCTFLajxraptoAOJBGZWgwVxV9gaO2onQ/viewform">Evaluación en Google Forms</a>
+     </div>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <footer class="footer"><div><b>Grupo 5</b> · Gómez Segura, Ana Isabel · Ríos, Luz Morena · Villagra, Brian Gustavo</div><div>Probabilidad · Tecnicatura y Licenciatura en Ciencia de Datos · 2026</div></footer>
+</main>
+<script>
+function gamma(z){
+ const p=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+ if(z<0.5)return Math.PI/(Math.sin(Math.PI*z)*gamma(1-z));
+ z-=1;let x=0.99999999999980993;for(let i=0;i<p.length;i++)x+=p[i]/(z+i+1);let t=z+p.length-0.5;return Math.sqrt(2*Math.PI)*Math.pow(t,z+0.5)*Math.exp(-t)*x;
+}
+function density(x,a,b){if(x<=0)return a<1?Infinity:0;return Math.pow(x,a-1)*Math.exp(-x/b)/(gamma(a)*Math.pow(b,a));}
+const canvas=document.getElementById('gammaChart'),ctx=canvas.getContext('2d'),alpha=document.getElementById('alpha'),beta=document.getElementById('beta');
+function fmt(v){return v.toFixed(2).replace('.',',')}
+function draw(){
+ const a=+alpha.value,b=+beta.value; document.getElementById('ao').value=a.toString().replace('.',',');document.getElementById('bo').value=b.toString().replace('.',',');
+ document.getElementById('mean').textContent=fmt(a*b);document.getElementById('variance').textContent=fmt(a*b*b);document.getElementById('sd').textContent=fmt(b*Math.sqrt(a));
+ const dpr=window.devicePixelRatio||1,rect=canvas.getBoundingClientRect();canvas.width=Math.max(520,rect.width*dpr);canvas.height=270*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);const W=canvas.width/dpr,H=canvas.height/dpr;
+ ctx.clearRect(0,0,W,H);const L=46,R=15,T=15,B=35,cw=W-L-R,ch=H-T-B;const xmax=Math.max(10,a*b+4*b*Math.sqrt(a));let ymax=0,pts=[];
+ for(let i=0;i<=220;i++){let x=Math.max(0.001,xmax*i/220),y=density(x,a,b);if(Number.isFinite(y)){ymax=Math.max(ymax,y);pts.push([x,y])}}
+ ymax*=1.15;ctx.strokeStyle='#dde3df';ctx.lineWidth=1;ctx.fillStyle='#728184';ctx.font='11px system-ui';for(let i=0;i<=5;i++){let y=T+ch*i/5;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+cw,y);ctx.stroke();let val=ymax*(1-i/5);ctx.fillText(val.toFixed(2),4,y+4)}for(let i=0;i<=5;i++){let x=L+cw*i/5;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ch);ctx.stroke();ctx.fillText((xmax*i/5).toFixed(1),x-10,H-11)}
+ ctx.strokeStyle='#60777a';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,T+ch);ctx.lineTo(L+cw,T+ch);ctx.stroke();
+ ctx.beginPath();pts.forEach((p,i)=>{let px=L+p[0]/xmax*cw,py=T+ch-p[1]/ymax*ch;i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.lineTo(L+cw,T+ch);ctx.lineTo(L,T+ch);ctx.closePath();ctx.fillStyle='rgba(20,128,138,.15)';ctx.fill();
+ ctx.beginPath();pts.forEach((p,i)=>{let px=L+p[0]/xmax*cw,py=T+ch-p[1]/ymax*ch;i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.strokeStyle='#e97836';ctx.lineWidth=3;ctx.stroke();
+ let mean=a*b,mx=L+mean/xmax*cw;ctx.beginPath();ctx.moveTo(mx,T+5);ctx.lineTo(mx,T+ch);ctx.strokeStyle='#0b5862';ctx.setLineDash([6,5]);ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#0b5862';ctx.font='700 11px system-ui';ctx.fillText('media',Math.min(mx+5,W-50),T+14);
+}
+alpha.addEventListener('input',draw);beta.addEventListener('input',draw);window.addEventListener('resize',draw);draw();
+document.querySelectorAll('.reveal').forEach(btn=>btn.addEventListener('click',()=>{const a=btn.nextElementSibling;a.classList.toggle('show');btn.textContent=a.classList.contains('show')?'Ocultar respuesta':'Ver respuesta'}));
+
+// Resalta el módulo visible en la navegación lateral.
+const sideLinks=[...document.querySelectorAll('.sideNav a')];
+const observed=[...document.querySelectorAll('.moduleAnchor[id]')];
+const observer=new IntersectionObserver(entries=>{
+ const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+ if(!visible)return;
+ sideLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+visible.target.id));
+},{rootMargin:'-18% 0px -65% 0px',threshold:[0,.05,.2]});
+observed.forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
